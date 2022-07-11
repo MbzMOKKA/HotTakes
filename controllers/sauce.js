@@ -57,6 +57,7 @@ exports.modifySauce = (request, response, next) => {
     {
         ...request.body,
     };
+    sauceInReq._id = sauceId;
     delete sauceInReq._userId;
     //Verifying that the sauce exists
     Sauce.findOne({_id: sauceId})
@@ -70,7 +71,7 @@ exports.modifySauce = (request, response, next) => {
                     errorFunctions.sendUnauthorizeError(response);
                 }else{
                     //Modifying the sauce on the data base
-                    Sauce.updateOne({ _id: sauceId}, { ...sauceInReq, _id: sauceId})
+                    Sauce.updateOne({ _id: sauceId}, sauceInReq)
                         .then(() => successFunctions.sendModifySuccess(response))
                         .catch(error => errorFunctions.sendServerError(response, error));
                 }
@@ -111,5 +112,78 @@ exports.deleteSauce = (request, response, next) => {
 
 
 exports.likeSauce = (request, response, next) => {
-    
+    const sauceId = request.params.id;
+    //Verifying that the sauce exists
+    Sauce.findOne({ _id : sauceId })
+        .then(sauceObject => {
+            if(sauceObject===null){
+                //Sauce provided does not exists : bad request
+                errorFunctions.sendBadRequestError(response, "Can't like/dislike something that does not exists");
+            }else{
+                const userConfirmedId = request.auth.userId;
+                let action_done = false;
+                switch(request.body.like){
+                    case -1:
+                        //Disliking
+                        if(sauceObject.usersDisliked.includes(userConfirmedId)===false){
+                            //Not disliked yet : okay
+                            sauceObject.usersDisliked.push(userConfirmedId);
+                            sauceObject.dislikes++;
+                            const userIdIndexLike = sauceObject.usersLiked.indexOf(userConfirmedId);
+                            if(userIdIndexLike!=-1){
+                                //Cancel the user like
+                                sauceObject.usersLiked.splice(userIdIndexLike);
+                                sauceObject.likes--;
+                            }
+                            action_done = true;
+                        }
+                        break;
+                    case 0:
+                        //Cancelling
+                        const userIdIndexLike = sauceObject.usersLiked.indexOf(userConfirmedId);
+                        if(userIdIndexLike!=-1){
+                            //Cancel the user like
+                            sauceObject.usersLiked.splice(userIdIndexLike);
+                            sauceObject.likes--;
+                            action_done = true;
+                        }else{
+                            const userIdIndexDislike = sauceObject.usersDisliked.indexOf(userConfirmedId);
+                            if(userIdIndexDislike!=-1){
+                                //Cancel the user dislike
+                                sauceObject.usersDisliked.splice(userIdIndexDislike);
+                                sauceObject.dislikes--;
+                                action_done = true;
+                            }
+                        }
+                        break;
+                    case 1:
+                        //Liking
+                        if(sauceObject.usersLiked.includes(userConfirmedId)===false){
+                            //Not liked yet : okay
+                            sauceObject.usersLiked.push(userConfirmedId);
+                            sauceObject.likes++;
+                            const userIdIndexDislike = sauceObject.usersDisliked.indexOf(userConfirmedId);
+                            if(userIdIndexDislike!=-1){
+                                //Cancel the user dislike
+                                sauceObject.usersDisliked.splice(userIdIndexDislike);
+                                sauceObject.dislikes--;
+                            }
+                            action_done = true;
+                        }
+                        break;
+                }
+                console.log(sauceObject);
+                const test = {...sauceObject};
+                if(action_done==true){
+                    //Updating the likes/dislikes on the data base
+                    Sauce.updateOne({ _id: sauceId}, sauceObject)
+                        .then(() => successFunctions.sendLikeSuccess(response))
+                        .catch(error => errorFunctions.sendServerError(response, error));
+                }else{
+                    //Bad request
+                    errorFunctions.sendBadRequestError(response, "Can't do that");
+                }
+            }
+        })
+        .catch(error => errorFunctions.sendServerError(response, error));
 };

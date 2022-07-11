@@ -14,3 +14,7 @@ exports.sendDeleteSuccess = (response) => {
 exports.sendModifySuccess = (response) => {
     response.status(200).json({ message : "Modification successful" });
 };
+//Response that is sent if a like/dislike is successfully done
+exports.sendLikeSuccess = (response) => {
+    response.status(200).json({ message : "Like/Dislike successful" });
+};
