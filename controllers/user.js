@@ -29,6 +29,8 @@ exports.signUp = (request, response, next) => {
         .catch(error => errorFunctions.sendServerError(response, error));
 };
 
+
+
 exports.logIn = (request, response, next) => {
     //Looking if the user exists
     User.findOne({ email : request.body.email, })

@@ -10,3 +10,7 @@ exports.sendUploadSuccess = (response) => {
 exports.sendDeleteSuccess = (response) => {
     response.status(200).json({ message : "Deletion successful" });
 };
+//Response that is sent if a modification is successfully done
+exports.sendModifySuccess = (response) => {
+    response.status(200).json({ message : "Modification successful" });
+};
