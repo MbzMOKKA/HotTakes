@@ -1,3 +1,9 @@
+
+/*
+faire a ce que l'ancienne image soit supprimé du serveur quand l'utilisateur modifie l'image de la sauce
+ comment fonctionne les variables d'environnement ? https://ichi.pro/fr/gerez-les-variables-d-environnement-dans-votre-application-nodejs-avec-dotenv-90198954812747
+*/
+
 const http = require('http');
 const app = require('./app');
 

@@ -8,7 +8,7 @@ exports.sendBadRequestError = (response, error) => {
 };
 //Response that is sent if trying to do an action without permissions
 exports.sendUnauthorizeError = (response) => {
-    response.status(401).json({ message: 'Unauthorized' });
+    response.status(403).json({ message: 'Unauthorized' });
 };
 //Response that is sent if email or password is not correct
 exports.sendLogInError = (response) => {
