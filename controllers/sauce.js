@@ -70,10 +70,21 @@ exports.modifySauce = (request, response, next) => {
                 if (sauceObject.userId != request.auth.userId) {
                     errorFunctions.sendUnauthorizeError(response);
                 }else{
-                    //Modifying the sauce on the data base
-                    Sauce.updateOne({ _id: sauceId}, sauceInReq)
-                        .then(() => successFunctions.sendModifySuccess(response))
-                        .catch(error => errorFunctions.sendServerError(response, error));
+                    //Deleting the previous sauce image if a new one is provided
+                    if(request.file){
+                        const filename = sauceObject.imageUrl.split('/images/')[1];
+                        fileSystem.unlink(`images/${filename}`, () => {
+                            //Modifying the sauce on the data base
+                            Sauce.updateOne({ _id: sauceId}, sauceInReq)
+                                .then(() => successFunctions.sendModifySuccess(response))
+                                .catch(error => errorFunctions.sendServerError(response, error));
+                        })
+                    }else{
+                        //Modifying the sauce on the data base
+                        Sauce.updateOne({ _id: sauceId}, sauceInReq)
+                            .then(() => successFunctions.sendModifySuccess(response))
+                            .catch(error => errorFunctions.sendServerError(response, error));
+                        }
                 }
             }
         })
@@ -172,8 +183,6 @@ exports.likeSauce = (request, response, next) => {
                         }
                         break;
                 }
-                console.log(sauceObject);
-                const test = {...sauceObject};
                 if(action_done==true){
                     //Updating the likes/dislikes on the data base
                     Sauce.updateOne({ _id: sauceId}, sauceObject)
