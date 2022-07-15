@@ -1,6 +1,8 @@
 //Imports
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
+dotenv.config();
 
 const User = require('../models/user');
 const errorFunctions = require('../common/errors');
@@ -51,7 +53,7 @@ exports.logIn = (request, response, next) => {
                                 userId : user._id,
                                 token : jwt.sign(
                                     { userId : user._id },
-                                    "a651z4875ij416s89t4118864ez19f",
+                                    process.env.TOKEN_SECRET_WORD,
                                     { expiresIn : '24h' },
                                 ),
                             });

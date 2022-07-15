@@ -1,11 +1,13 @@
 //Imports
 const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
+dotenv.config();
  
 //Exports
 module.exports = (req, res, next) => {
    try {
        const token = req.headers.authorization.split(' ')[1];
-       const decodedToken = jwt.verify(token, 'a651z4875ij416s89t4118864ez19f');
+       const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_WORD);
        const userId = decodedToken.userId;
        req.auth = {
            userId: userId,
