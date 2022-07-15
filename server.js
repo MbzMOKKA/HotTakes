@@ -5,9 +5,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 //Server init
-const normalizePort = val => {
+function normalizePort(val){
   const port = parseInt(val, 10);
-
   if(isNaN(port)){
     return val;
   }
@@ -15,16 +14,16 @@ const normalizePort = val => {
     return port;
   }
   return false;
-};
-const port = normalizePort(process.env.PORT);
-app.set('port', port);
+}
 
-const errorHandler = error => {
+function errorHandler(error){
   if(error.syscall !== 'listen'){
     throw error;
   }
+  //Different messages for each type of adress
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+  //Reacting the each type of server error
   switch(error.code){
     case 'EACCES':
       console.error(bind + ' requires elevated privileges.');
@@ -37,15 +36,20 @@ const errorHandler = error => {
     default:
       throw error;
   }
-};
+}
 
-const server = http.createServer(app);
+const port = normalizePort(process.env.PORT);
+app.set('port', port);//Sets the app's port
 
+const server = http.createServer(app);//Create the server
 server.on('error', errorHandler);
 server.on('listening', () => {
+  //Different messages for each type of adress
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
   console.log('Listening on ' + bind);
 });
 
-server.listen(port);
+server.setTimeout(1000*15);//15s timeout
+
+server.listen(port);//Start the server
