@@ -2,13 +2,15 @@
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require("dotenv");
 const app = express();
+dotenv.config();
 
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
 
 //Connections
-mongoose.connect('mongodb+srv://admin:w4Qp9YkzKOOs22cd@cluster-hot-takes.mg8ja.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(process.env.DB_LOGIN,
   {
     useNewUrlParser : true,
     useUnifiedTopology : true,
