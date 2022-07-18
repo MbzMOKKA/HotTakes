@@ -18,7 +18,14 @@ exports.getAllSauces = (request, response, next) => {
 exports.getOneSauce = (request, response, next) => {
     //Getting informations about the specified sauce
     Sauce.findOne({ _id : request.params.id })
-        .then(sauceAsked => response.status(200).json(sauceAsked))
+        .then(sauceAsked => {
+            if(sauceAsked===null){
+                //Sauce provided does not exists : bad request
+                errorFunctions.sendBadRequestError(response, "Can't find something that does not exists");
+            }else{
+                response.status(200).json(sauceAsked);
+            }
+        })
         .catch(error => errorFunctions.sendServerError(response, error));
 };
 
