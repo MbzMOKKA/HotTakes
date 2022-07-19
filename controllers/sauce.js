@@ -48,7 +48,12 @@ exports.uploadSauce = (request, response, next) => {
     //Uploading the sauce to the data base
     sauceToUpload.save()
         .then(() => successFunctions.sendUploadSuccess(response))
-        .catch(error => errorFunctions.sendBadRequestError(response, error));
+        .catch(error => {
+            //Deleting the images that was created if an error occured
+            fileSystem.unlink(`images/${request.file.filename}`, () => {
+                errorFunctions.sendBadRequestError(response, error);
+            })
+        });
 };
 
 
