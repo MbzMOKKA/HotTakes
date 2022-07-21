@@ -21,7 +21,7 @@ exports.getOneSauce = (request, response, next) => {
         .then(sauceAsked => {
             if(sauceAsked===null){
                 //Sauce provided does not exists : bad request
-                errorFunctions.sendBadRequestError(response, "Can't find something that does not exists");
+                errorFunctions.sendNotFoundError(response, "Can't find something that does not exists");
             }else{
                 response.status(200).json(sauceAsked);
             }
@@ -76,7 +76,7 @@ exports.modifySauce = (request, response, next) => {
         .then((sauceObject) => {
             if(sauceObject===null){
                 //Sauce provided does not exists : bad request
-                errorFunctions.sendBadRequestError(response, "Can't modify something that does not exists");
+                errorFunctions.sendNotFoundError(response, "Can't modify something that does not exists");
             }else{
                 //The user behind the request does not own the sauce he is trying to modify
                 if (sauceObject.userId != request.auth.userId) {
@@ -112,7 +112,7 @@ exports.deleteSauce = (request, response, next) => {
         .then(sauceObject => {
             if(sauceObject===null){
                 //Sauce provided does not exists : bad request
-                errorFunctions.sendBadRequestError(response, "Can't delete something that does not exists");
+                errorFunctions.sendNotFoundError(response, "Can't delete something that does not exists");
             }else{
                 if (sauceObject.userId!=request.auth.userId) {
                     //The user behind the request does not own the sauce he is trying to delete
@@ -141,7 +141,7 @@ exports.likeSauce = (request, response, next) => {
         .then(sauceObject => {
             if(sauceObject===null){
                 //Sauce provided does not exists : bad request
-                errorFunctions.sendBadRequestError(response, "Can't like/dislike something that does not exists");
+                errorFunctions.sendNotFoundError(response, "Can't like/dislike something that does not exists");
             }else{
                 const userConfirmedId = request.auth.userId;
                 let action_done = false;

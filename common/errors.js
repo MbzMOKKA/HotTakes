@@ -6,6 +6,10 @@ exports.sendServerError = (response, error) => {
 exports.sendBadRequestError = (response, error) => {
     response.status(400).json({ error });
 };
+//Response that is sent if the ressource asked does not exists
+exports.sendNotFoundError = (response, error) => {
+    response.status(404).json({ error });
+};
 //Response that is sent if trying to do an action without permissions
 exports.sendUnauthorizeError = (response) => {
     response.status(403).json({ message: 'Unauthorized' });
