@@ -4,16 +4,16 @@ const dotenv = require("dotenv");
 dotenv.config();
  
 //Exports
-module.exports = (req, res, next) => {
+module.exports = (request, response, next) => {
    try {
-       const token = req.headers.authorization.split(' ')[1];
+       const token = request.headers.authorization.split(' ')[1];
        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_WORD);
        const userId = decodedToken.userId;
-       req.auth = {
+       request.auth = {
            userId: userId,
        };
 	next();
    } catch(error) {
-       res.status(401).json({ error });
+        response.status(401).json({ error });
    }
 };
