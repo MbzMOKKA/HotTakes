@@ -79,7 +79,7 @@ exports.modifySauce = (request, response, next) => {
                 errorFunctions.sendNotFoundError(response, "Can't modify something that does not exists");
             }else{
                 //The user behind the request does not own the sauce he is trying to modify
-                if (sauceObject.userId != request.auth.userId) {
+                if(sauceObject.userId!=request.auth.userId){
                     errorFunctions.sendUnauthorizeError(response);
                 }else{
                     //Deleting the previous sauce image if a new one is provided
@@ -96,7 +96,7 @@ exports.modifySauce = (request, response, next) => {
                         Sauce.updateOne({ _id: sauceId}, sauceInReq)
                             .then(() => successFunctions.sendModifySuccess(response))
                             .catch(error => errorFunctions.sendServerError(response, error));
-                        }
+                    }
                 }
             }
         })
@@ -114,7 +114,7 @@ exports.deleteSauce = (request, response, next) => {
                 //Sauce provided does not exists : bad request
                 errorFunctions.sendNotFoundError(response, "Can't delete something that does not exists");
             }else{
-                if (sauceObject.userId!=request.auth.userId) {
+                if(sauceObject.userId!=request.auth.userId){
                     //The user behind the request does not own the sauce he is trying to delete
                     errorFunctions.sendUnauthorizeError(response);
                 }else{
@@ -144,7 +144,7 @@ exports.likeSauce = (request, response, next) => {
                 errorFunctions.sendNotFoundError(response, "Can't like/dislike something that does not exists");
             }else{
                 const userConfirmedId = request.auth.userId;
-                let action_done = false;
+                let actionDone = false;
                 switch(request.body.like){
                     case -1:
                         //Disliking
@@ -158,7 +158,7 @@ exports.likeSauce = (request, response, next) => {
                                 sauceObject.usersLiked.splice(userIdIndexLike);
                                 sauceObject.likes--;
                             }
-                            action_done = true;
+                            actionDone = true;
                         }
                         break;
                     case 0:
@@ -168,14 +168,14 @@ exports.likeSauce = (request, response, next) => {
                             //Cancel the user like
                             sauceObject.usersLiked.splice(userIdIndexLike);
                             sauceObject.likes--;
-                            action_done = true;
+                            actionDone = true;
                         }else{
                             const userIdIndexDislike = sauceObject.usersDisliked.indexOf(userConfirmedId);
                             if(userIdIndexDislike!=-1){
                                 //Cancel the user dislike
                                 sauceObject.usersDisliked.splice(userIdIndexDislike);
                                 sauceObject.dislikes--;
-                                action_done = true;
+                                actionDone = true;
                             }
                         }
                         break;
@@ -191,11 +191,11 @@ exports.likeSauce = (request, response, next) => {
                                 sauceObject.usersDisliked.splice(userIdIndexDislike);
                                 sauceObject.dislikes--;
                             }
-                            action_done = true;
+                            actionDone = true;
                         }
                         break;
                 }
-                if(action_done==true){
+                if(actionDone==true){
                     //Updating the likes/dislikes on the data base
                     Sauce.updateOne({ _id: sauceId}, sauceObject)
                         .then(() => successFunctions.sendLikeSuccess(response))
